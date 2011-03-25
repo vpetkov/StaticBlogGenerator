@@ -28,6 +28,17 @@ local PATH_TO_MARKDOWN="./markdown/Markdown.pl"
 
 local TEMPLATE_DIR="./templates"
 
+# By default the templates for the home page are stored
+# in sub-dir of the main template dir named after
+# the home page content file.
+# If no suitable template files are found for the home
+# page the default ones will be used.
+
+local HOME_PAGE_TEMPLATE_DIR=$HOME_PAGE_FILE_NAME
+
+# Note that the header and footer templates for the home
+# page template should have the same names.
+
 local TEMPLATE_HEADER_FILE_NAME="head"
 
 local TEMPLATE_FOOTER_FILE_NAME="foot"
@@ -61,6 +72,16 @@ done
 
 # Generate home page
 FILE_PATH=$CONTENT_DIR/$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION
+if [ -d $TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR ]; then
+	if [ -f "$TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html" ]; then 
+		TEMPLATE_HEADER_FILE_NAME=$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME
+	fi
+
+	if [ -f "$TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html" ]; then 
+		TEMPLATE_FOOTER_FILE_NAME=$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME
+	fi
+fi
+
 if [ -f $FILE_PATH ]
 then
 	local INPUT=$FILE_PATH
