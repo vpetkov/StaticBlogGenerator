@@ -9,7 +9,7 @@ __CONTENT_DIR__ - the location for plain text files. Each one will be a new html
 __OUTPUT_DIR__ - the location for newly generated static html files. Files will be put according to the directory structure in the __CONTENT_DIR__ as follows:  
 `CONTENT_DIR/category/sub-category/filename.markdown` will result a static html file:  
 `OUTPUT_DIR/category/sub-category/filename/index.html`
-####Note#### __TODO__: Currently the script wipes out completely the __OUTPUT_DIR__ before generating new content. In the following versions this default behavior will be fixed and only new content will be generated unless explicitly otherwise noted.
+#### __TODO__: Currently the script wipes out completely the __OUTPUT_DIR__ before generating new content. In the following versions this default behavior will be fixed and only new content will be generated unless explicitly otherwise noted.
 
 __CONTENT_FILE_EXTENSION__ - the default extension for plain text content files. Only files with this extension in the __CONTENT_DIR__ will be taken into account. Default extension is _.markdown_ so that other files like _.txt_ can be stored as readme or draft files.
 
