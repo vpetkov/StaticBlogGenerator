@@ -1,6 +1,15 @@
-#! /bin/sh
+#!/bin/sh
 
+# Author: Vesselin Petkov <mail@vpetkov.com>
+# Version: 0.1
+# https://github.com/vpetkov/StaticBlogGenerator
+#
 # --- Configurable variables -----
+#
+# Skip the trailing forward slash (i.e. "/") when
+# specifying paths.
+#
+# Both absolute and relative paths are OK.
 
 local TEMPLATE_DIR="./templates"
 
