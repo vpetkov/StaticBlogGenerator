@@ -21,6 +21,8 @@ __PATH_TO_MARKDOWN__ - the location of the Markdown script. By default this repo
 
 __TEMPLATE_DIR__ - the location for the template used to html pages. Currently the script supports two separate files one for the html before the content and one for the html ater the content. Templates file names are `head.html` and `foot.html` - this idea is taken from [Blosxom](http://www.blosxom.com/).
 
+__HOME_PAGE_TEMPLATE_DIR__ - the location for home page specific templates. Default is the same as __HOME_PAGE_FILE_NAME__. If suitable template fileas aren't found for the home page the default ones will be used.
+
 __TEMPLATE_HEADER_FILE_NAME__ and __TEMPLATE_FOOTER_FILE_NAME__ hold the information for template file names.
 
 ### For questions, suggestions, help: [mail@vpetkov.com](mailto:mail@vpetkov.com)
