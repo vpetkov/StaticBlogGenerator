@@ -1,8 +1,10 @@
 #!/bin/sh
 
 # Author: Vesselin Petkov <mail@vpetkov.com>
-# Version: 0.1
-# https://github.com/vpetkov/StaticBlogGenerator
+# Version: 1.0
+# http://github.com/vpetkov/StaticBlogGenerator
+#
+# For help on configuration refer to http://github.com/vpetkov/StaticBlogGenerator#readme
 #
 # --- Configurable variables -----
 #
@@ -57,7 +59,9 @@ markdown()
 # Generate content
 generate_content()
 {
-	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" | grep -v "$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION"); do
+	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" |
+		grep -v "$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION"); do
+
 		local INPUT=$FILE_PATH
 
 		FILE_PATH=${FILE_PATH%.markdown}
