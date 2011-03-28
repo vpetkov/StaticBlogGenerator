@@ -6,10 +6,12 @@
 #
 # --- Configurable variables -----
 #
-# Skip the trailing forward slash (i.e. "/") when
+# Skip the trailing slash (i.e. "/") when
 # specifying paths.
 #
 # Both absolute and relative paths are OK.
+
+DEPLOY_DIR="./Public"
 
 OUTPUT_DIR="./html"
 
@@ -55,8 +57,6 @@ markdown()
 # Generate content
 generate_content()
 {
-	rm -rf $OUTPUT_DIR
-
 	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" | grep -v "$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION"); do
 		local INPUT=$FILE_PATH
 
@@ -95,10 +95,24 @@ generate_home_page()
 	fi
 }
 
-while getopts ch opts; do
+deploy()
+{
+	if [ -d $OUTPUT_DIR ]; then
+		cp -rfv $OUTPUT_DIR/* $DEPLOY_DIR/
+	fi
+}
+
+force_generate()
+{
+	rm -rfv $OUTPUT_DIR
+}
+
+while getopts chdf opts; do
 	case "$opts" in
 	c)	generate_content;;
 	h)	generate_home_page;;
+	d)	deploy;;
+	f)	force_generate;;
 	esac
 done
 
