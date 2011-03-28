@@ -1,13 +1,18 @@
 ### This is a simple shell script that converts plain text files to static html pages using a template.
 
+-------------------------------------------------
+
 #### Options:
 
 Run `generate.sh` with the following options:  
-`-f`: remove OUTPUT_DIR before generating new content  
+`-f`: Remove OUTPUT_DIR before generating new content.  
 NOTE: Always put the `-f` option first.  
-`-c`: generate content pages  
-`-h`: generate home page  
-`-d`: deploy  
+`-c`: Generate content pages.  
+`-h`: Generate home page.  
+`-d`: Deploy.  
+NOTE: Always put the `-d` option last.  
+
+-------------------------------------------------
 
 #### The script uses John Grubers's [Markdown](http://daringfireball.net/projects/markdown/) to convert plain text to html.
 
@@ -36,6 +41,8 @@ __HOME_PAGE_TEMPLATE_DIR__ - the location for home page specific templates. Defa
 __TEMPLATE_HEADER_FILE_NAME__ and __TEMPLATE_FOOTER_FILE_NAME__ hold the information for template file names.
 
 #### My template files are available here: [StaticBlogTemplates](https://github.com/vpetkov/StaticBlogTemplates)
+
+-------------------------------------------------
 
 ### For questions, suggestions, help: [mail@vpetkov.com](mailto:mail@vpetkov.com)
 
