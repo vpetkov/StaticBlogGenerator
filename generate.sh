@@ -102,17 +102,17 @@ deploy()
 	fi
 }
 
-force_generate()
+clean_outdir()
 {
 	rm -rfv $OUTPUT_DIR
 }
 
-while getopts chdf opts; do
+while getopts fchd opts; do
 	case "$opts" in
+	f)	clean_outdir;;
 	c)	generate_content;;
 	h)	generate_home_page;;
 	d)	deploy;;
-	f)	force_generate;;
 	esac
 done
 

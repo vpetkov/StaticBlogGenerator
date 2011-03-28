@@ -1,11 +1,12 @@
 ### This is a simple shell script that converts plain text files to static html pages using a template.
 
-### Options
+#### Options:
 
 Run `generate.sh` with the following options:  
+`-f`: remove OUTPUT_DIR before generating new content
+NOTE: Always put the `-f` option first.
 `-c`: generate content pages  
 `-h`: generate home page  
-`-f`: force generate (remove OUTPUT_DIR before generating new content)  
 `-d`: deploy  
 
 #### The script uses John Grubers's [Markdown](http://daringfireball.net/projects/markdown/) to convert plain text to html.
