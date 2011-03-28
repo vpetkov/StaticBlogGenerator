@@ -3,8 +3,8 @@
 #### Options:
 
 Run `generate.sh` with the following options:  
-`-f`: remove OUTPUT_DIR before generating new content
-NOTE: Always put the `-f` option first.
+`-f`: remove OUTPUT_DIR before generating new content  
+NOTE: Always put the `-f` option first.  
 `-c`: generate content pages  
 `-h`: generate home page  
 `-d`: deploy  
@@ -34,6 +34,8 @@ __TEMPLATE_DIR__ - the location for the template used to html pages. Currently t
 __HOME_PAGE_TEMPLATE_DIR__ - the location for home page specific templates. Default is the same as __HOME_PAGE_FILE_NAME__. If suitable template files aren't found for the home page the default ones will be used.
 
 __TEMPLATE_HEADER_FILE_NAME__ and __TEMPLATE_FOOTER_FILE_NAME__ hold the information for template file names.
+
+#### My template files are available here: [StaticBlogTemplates](https://github.com/vpetkov/StaticBlogTemplates)
 
 ### For questions, suggestions, help: [mail@vpetkov.com](mailto:mail@vpetkov.com)
 
