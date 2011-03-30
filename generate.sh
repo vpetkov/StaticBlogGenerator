@@ -13,11 +13,13 @@
 #
 # Both absolute and relative paths are OK.
 
-DEPLOY_DIR="./Public"
+DEPLOY_DIR="./example/www"
 
-OUTPUT_DIR="./html"
+OUTPUT_DIR="./example/html"
 
-CONTENT_DIR="./content"
+CONTENT_DIR="./example/content"
+
+TEMPLATE_DIR="./example/templates"
 
 CONTENT_FILE_EXTENSION="markdown"
 
@@ -27,11 +29,6 @@ HOME_PAGE_FILE_NAME="home"
 
 PATH_TO_MARKDOWN="./markdown/Markdown.pl"
 
-# Template files must have .html extensions
-# and must contain valid HTML
-
-TEMPLATE_DIR="./templates"
-
 # By default the templates for the home page are stored
 # in sub-dir of the main template dir named after
 # the home page content file.
@@ -40,12 +37,15 @@ TEMPLATE_DIR="./templates"
 
 HOME_PAGE_TEMPLATE_DIR=$HOME_PAGE_FILE_NAME
 
-# Note that the header and footer templates for the home
-# page template should have the same names.
+# Template files must have .html extensions
+# and must contain valid HTML
 
 TEMPLATE_HEADER_FILE_NAME="head"
 
 TEMPLATE_FOOTER_FILE_NAME="foot"
+
+# Note that the header and footer templates for the home
+# page template should have the same names.
 
 # --------------------------------
 
