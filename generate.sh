@@ -79,6 +79,10 @@ generate_content()
 # Generate home page
 generate_home_page()
 {
+	if [ ! -d $OUTPUT_DIR ]; then
+		mkdir -p $OUTPUT_DIR
+	fi
+
 	FILE_PATH=$CONTENT_DIR/$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION
 	if [ -d $TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR ]; then
 		if [ -f "$TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html" ]; then 
