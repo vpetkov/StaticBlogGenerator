@@ -101,7 +101,7 @@ generate_home_page()
 
 deploy()
 {
-	if [ -d $OUTPUT_DIR ]; then
+	if [ -d $OUTPUT_DIR ] && [ -d $DEPLOY_DIR ]; then
 		cp -rfv $OUTPUT_DIR/* $DEPLOY_DIR/
 	fi
 }
