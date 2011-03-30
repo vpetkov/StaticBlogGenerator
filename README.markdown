@@ -42,6 +42,10 @@ __TEMPLATE_HEADER_FILE_NAME__ and __TEMPLATE_FOOTER_FILE_NAME__ hold the informa
 
 #### My template files are available here: [StaticBlogTemplates](https://github.com/vpetkov/StaticBlogTemplates)
 
+Also the example directory contains sample files and the script is supposed to work out of the box and be able to generate the example.
+To use remove the example directory, edit the configuration are with your server's paths and generate your blog.
+NOTE: Don't forget to copy the markdown directory with the script.
+
 -------------------------------------------------
 
 ### For questions, suggestions, help: [mail@vpetkov.com](mailto:mail@vpetkov.com)
