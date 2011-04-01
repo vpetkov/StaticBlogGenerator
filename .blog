@@ -1,0 +1,45 @@
+# --- Configurable variables -----
+#
+# Skip the trailing slash (i.e. "/") when
+# specifying paths.
+#
+# Both absolute and relative paths are OK.
+
+#DEPLOY_USER=""
+
+#DEPLOY_HOST=""
+
+DEPLOY_DIR="./example/www"
+
+OUTPUT_DIR="./example/html"
+
+CONTENT_DIR="./example/content"
+
+TEMPLATE_DIR="./example/templates"
+
+CONTENT_FILE_EXTENSION="markdown"
+
+HOME_PAGE_FILE_NAME="home"
+
+PATH_TO_MARKDOWN="./markdown/Markdown.pl"
+
+# --- Variables not recomended for reconfiguration -----
+
+# By default the templates for the home page are stored
+# in sub-dir of the main template dir named after
+# the home page content file.
+# If no suitable template files are found for the home
+# page the default ones will be used.
+
+HOME_PAGE_TEMPLATE_DIR=$TEMPLATE_DIR/$HOME_PAGE_FILE_NAME
+
+# Template files must have .html extensions
+# and must contain valid HTML
+
+TEMPLATE_HEADER_FILE_NAME="head"
+
+TEMPLATE_FOOTER_FILE_NAME="foot"
+
+# Note that the header and footer templates for the home
+# page template should have the same names.
+
