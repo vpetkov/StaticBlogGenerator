@@ -1,64 +1,63 @@
 #!/bin/sh
 
 # Author: Vesselin Petkov <mail@vpetkov.com>
-# Version: 1.0
+# Version: 2.0
 # http://github.com/vpetkov/StaticBlogGenerator
 #
 # For help on configuration refer to http://github.com/vpetkov/StaticBlogGenerator#readme
-#
+
+
 # --- Configurable variables -----
-#
-# Skip the trailing slash (i.e. "/") when
-# specifying paths.
-#
-# Both absolute and relative paths are OK.
 
-DEPLOY_DIR="./example/www"
-
-OUTPUT_DIR="./example/html"
-
-CONTENT_DIR="./example/content"
-
-TEMPLATE_DIR="./example/templates"
-
-CONTENT_FILE_EXTENSION="markdown"
-
-HOME_PAGE_FILE_NAME="home"
-
-# --- Variables not recomended for reconfiguration -----
-
-PATH_TO_MARKDOWN="./markdown/Markdown.pl"
-
-# By default the templates for the home page are stored
-# in sub-dir of the main template dir named after
-# the home page content file.
-# If no suitable template files are found for the home
-# page the default ones will be used.
-
-HOME_PAGE_TEMPLATE_DIR=$HOME_PAGE_FILE_NAME
-
-# Template files must have .html extensions
-# and must contain valid HTML
-
-TEMPLATE_HEADER_FILE_NAME="head"
-
-TEMPLATE_FOOTER_FILE_NAME="foot"
-
-# Note that the header and footer templates for the home
-# page template should have the same names.
+# Change the name of the configuration file
+CONFIG_FILE_NAME=".blog"
+# IMPORTANT: This is just the name of the file. The directory
+# where it is stored can be either the $HOME or $PWD.
+# The latter is useful for multiple site configurations.
 
 # --------------------------------
 
-markdown()
+load_configuration()
 {
-	cat $TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html > $OUTPUT
-	perl $PATH_TO_MARKDOWN $INPUT >> $OUTPUT
-	cat $TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html >> $OUTPUT
+	if [ -s $PWD/$CONFIG_FILE_NAME ]
+	then
+		CONFIG_FILE_PATH=$PWD/$CONFIG_FILE_NAME
+		[ "${QUIET:-0}" -eq 0 ] && echo "Load configuration from $CONFIG_FILE_PATH"
+
+	elif [ -s $HOME/$CONFIG_FILE_NAME ]
+	then
+		CONFIG_FILE_PATH=$HOME/$CONFIG_FILE_NAME
+		[ "${QUIET:-0}" -eq 0 ] && echo "Load configuration from $CONFIG_FILE_PATH"
+
+	else
+		[ "${QUIET:-0}" -eq 0 ] && echo "No configuration found"
+		exit 1
+	fi
+
+	. $CONFIG_FILE_PATH
 }
 
-# Generate content
-generate_content()
+markdown()
 {
+	cat $TEMPLATE_HEADER_FILE > $OUTPUT
+	perl $PATH_TO_MARKDOWN $INPUT >> $OUTPUT
+	cat $TEMPLATE_FOOTER_FILE >> $OUTPUT
+}
+
+generate()
+{
+	[ "${QUIET:-0}" -eq 0 ] && echo "Generate content..."
+
+	TEMPLATE_HEADER_FILE="$TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html"
+	TEMPLATE_FOOTER_FILE="$TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html"
+
+	if [ -f TEMPLATE_HEADER_FILE ] && [ -f TEMPLATE_FOOTER_FILE ]
+	then
+		[ "${QUIET:-0}" -eq 0 ] && echo "Template missing"
+		exit 2
+	fi
+
+	rm -rf $OUTPUT_DIR
 	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" |
 		grep -v "$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION"); do
 
@@ -68,29 +67,27 @@ generate_content()
 		FILE_PATH=${FILE_PATH#$CONTENT_DIR/}
 		FILE_PATH=$OUTPUT_DIR/$FILE_PATH
 		mkdir -p $FILE_PATH
-		echo $FILE_PATH
+		[ "${VERBOSE:-0}" -ge 1 ] && echo $FILE_PATH
 
 		local OUTPUT=$FILE_PATH/index.html
 		markdown
-		echo $OUTPUT
-	done
-}
 
-# Generate home page
-generate_home_page()
-{
-	if [ ! -d $OUTPUT_DIR ]; then
-		mkdir -p $OUTPUT_DIR
-	fi
+		[ "${VERBOSE:-0}" -ge 1 ] && echo $OUTPUT
+	done
+
+	[ "${QUIET:-0}" -eq 0 ] && echo "Generate home page..."
 
 	FILE_PATH=$CONTENT_DIR/$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION
-	if [ -d $TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR ]; then
-		if [ -f "$TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html" ]; then 
-			TEMPLATE_HEADER_FILE_NAME=$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME
+	if [ -d $HOME_PAGE_TEMPLATE_DIR ]
+	then
+		if [ -f "$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html" ]
+		then 
+			TEMPLATE_HEADER_FILE="$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html"
 		fi
 
-		if [ -f "$TEMPLATE_DIR/$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html" ]; then 
-			TEMPLATE_FOOTER_FILE_NAME=$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME
+		if [ -f "$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html" ]
+		then 
+			TEMPLATE_FOOTER_FILE="$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html"
 		fi
 	fi
 
@@ -99,29 +96,37 @@ generate_home_page()
 		local INPUT=$FILE_PATH
 		local OUTPUT=$OUTPUT_DIR/index.html
 		markdown
-		echo $OUTPUT
+		[ "${VERBOSE:-0}" -ge 1 ] && echo $OUTPUT
 	fi
 }
 
 deploy()
 {
-	if [ -d $OUTPUT_DIR ] && [ -d $DEPLOY_DIR ]; then
-		cp -rfv $OUTPUT_DIR/* $DEPLOY_DIR/
+	[ "${QUIET:-0}" -eq 0 ] && echo "Deploy..."
+
+	if [ -z $DEPLOY_USER ] && [ -z $DEPLOY_HOST ] && [ -d $OUTPUT_DIR ] && [ -d $DEPLOY_DIR ]
+	then
+		cp -rf $([ "${VERBOSE:-0}" -ge 1 ] && echo "-v") $OUTPUT_DIR/* $DEPLOY_DIR/
+
+	elif [ ! -z $DEPLOY_USER ] && [ ! -z $DEPLOY_HOST ] && [ -d $OUTPUT_DIR ] && [ -d $DEPLOY_DIR ]
+	then
+		rsync -r $([ "${VERBOSE:-0}" -ge 1 ] && echo "-v") $OUTPUT_DIR/* $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DIR/
 	fi
 }
 
-clean_outdir()
-{
-	rm -rfv $OUTPUT_DIR
-}
-
-while getopts fchd opts; do
+# Get options
+while getopts vqgd opts; do
 	case "$opts" in
-	f)	clean_outdir;;
-	c)	generate_content;;
-	h)	generate_home_page;;
-	d)	deploy;;
+	v)	VERBOSE=1 ;;
+	q)	QUIET=1 ;;
+	g)	GENERATE=1 ;;
+	d)	DEPLOY=1 ;;
 	esac
 done
+
+load_configuration
+[ "${GENERATE:-0}" -eq 1 ] && generate
+[ "${DEPLOY:-0}" -eq 1 ] && deploy
+[ "${QUIET:-0}" -eq 0 ] && echo "Done."
 
 exit 0
