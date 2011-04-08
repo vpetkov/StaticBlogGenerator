@@ -59,8 +59,8 @@ generate()
 
 	rm -rf $OUTPUT_DIR
 	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" |
-		grep -v "$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION"); do
-
+		grep -v "$HOME_PAGE_FILE_NAME\.$CONTENT_FILE_EXTENSION\|$FEED_FILE_NAME\.$CONTENT_FILE_EXTENSION")
+	do
 		local INPUT=$FILE_PATH
 
 		FILE_PATH=${FILE_PATH%.markdown}
@@ -114,19 +114,61 @@ deploy()
 	fi
 }
 
+generate_deploy_rss_feed()
+{
+	[ "${QUIET:-0}" -eq 0 ] && echo "Generate new feed..."
+
+	RSS_ITEM_TITLE=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "\[.\+\]" | tr -d "[]")
+	RSS_ITEM_LINK=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "(.\+)" | tr -d "()")
+
+	sed '1d' "$CONTENT_DIR/$FEED_FILE_NAME.markdown" > .rss_tmp
+	RSS_ITEM_DESCRIPTION=$(perl ./markdown/Markdown.pl .rss_tmp)
+	rm -f .rss_tmp
+
+	XML_TEMPLATE="
+	<?xml version="1.0"?>\n
+	<rss version="2.0">\n
+	   <channel>\n
+		  <title>${RSS_CHANEL_TITLE}</title>\n
+		  <link>${RSS_CHANEL_LINK}</link>\n
+		  <description>${RSS_CHANEL_DESCRIPTION}</description>\n
+		  <language>${RSS_LANGUAGE}</language>\n
+		  <ttl>${RSS_TTL}</ttl>\n
+		  <pubDate>${RSS_DATE}</pubDate>\n
+		  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n
+		  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n
+		  <generator>Vim</generator>\n
+		  <webMaster>${RSS_WEB_MASTER}</webMaster>\n
+		  <item>\n
+			 <title>${RSS_ITEM_TITLE}</title>\n
+			 <link>${RSS_ITEM_LINK}</link>\n
+			 <description>${RSS_ITEM_DESCRIPTION}</description>\n
+			 <pubDate>${RSS_DATE}</pubDate>\n
+			 <guid>${RSS_ITEM_LINK}</guid>\n
+		  </item>\n
+	   </channel>\n
+	</rss>"
+
+	mkdir -p $DEPLOY_DIR/$FEED_FILE_NAME
+	echo $XML_TEMPLATE > "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+	[ "${VERBOSE:-0}" -ge 1 ] && echo "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+}
+
 # Get options
-while getopts vqgd opts; do
+while getopts vqgdf opts; do
 	case "$opts" in
 	v)	VERBOSE=1 ;;
 	q)	QUIET=1 ;;
-	g)	GENERATE=1 ;;
-	d)	DEPLOY=1 ;;
+	g)	DO_GENERATE=1 ;;
+	d)	DO_DEPLOY=1 ;;
+	f)	DO_FEED=1 ;;
 	esac
 done
 
 load_configuration
-[ "${GENERATE:-0}" -eq 1 ] && generate
-[ "${DEPLOY:-0}" -eq 1 ] && deploy
+[ "${DO_GENERATE:-0}" -eq 1 ] && generate
+[ "${DO_DEPLOY:-0}" -eq 1 ] && deploy
+[ "${DO_FEED:-0}" -eq 1 ] && generate_deploy_rss_feed
 [ "${QUIET:-0}" -eq 0 ] && echo "Done."
 
 exit 0

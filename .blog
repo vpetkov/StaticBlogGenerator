@@ -21,7 +21,25 @@ CONTENT_FILE_EXTENSION="markdown"
 
 HOME_PAGE_FILE_NAME="home"
 
+FEED_FILE_NAME="feed"
+
 PATH_TO_MARKDOWN="./markdown/Markdown.pl"
+
+# --- RSS Feed Configuration ---
+
+RSS_CHANEL_TITLE="Vesselin Petkov"
+
+RSS_CHANEL_LINK="http://vpetkov.com/"
+
+RSS_CHANEL_DESCRIPTION="My Personal Blog."
+
+RSS_LANGUAGE="bg"
+
+RSS_WEB_MASTER="mail@vpetkov.com"
+
+RSS_TTL="40"
+
+RSS_DATE="`date +%c`"
 
 # --- Variables not recomended for reconfiguration -----
 
