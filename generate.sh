@@ -121,7 +121,7 @@ generate_deploy_rss_feed()
 	RSS_ITEM_TITLE=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "\[.\+\]" | tr -d "[]")
 	RSS_ITEM_LINK=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "(.\+)" | tr -d "()")
 
-	sed '1d' "$CONTENT_DIR/$FEED_FILE_NAME.markdown" > .rss_tmp
+	tail --lines=+2 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" > .rss_tmp
 	RSS_ITEM_DESCRIPTION=$(perl ./markdown/Markdown.pl .rss_tmp)
 	rm -f .rss_tmp
 
