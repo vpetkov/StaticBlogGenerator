@@ -10,7 +10,7 @@
 # --- Configurable variables -----
 
 # Change the name of the configuration file
-CONFIG_FILE_NAME=".blog"
+CONFIG_FILE_NAME="site.conf"
 # IMPORTANT: This is just the name of the file. The directory
 # where it is stored can be either the $HOME or $PWD.
 # The latter is useful for multiple site configurations.
