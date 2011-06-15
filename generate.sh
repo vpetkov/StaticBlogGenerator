@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Author: Vesselin Petkov <mail@vpetkov.com>
-# Version: 2.0
+# Version: 2.1
 # http://github.com/vpetkov/StaticBlogGenerator
 #
 # For help on configuration refer to http://github.com/vpetkov/StaticBlogGenerator#readme
@@ -118,6 +118,8 @@ generate_deploy_rss_feed()
 {
 	[ "${QUIET:-0}" -eq 0 ] && echo "Generate new feed..."
 
+	RSS_DATE="`date +${RSS_DATE_FORMAT}`"
+
 	RSS_ITEM_TITLE=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "\[.\+\]" | tr -d "[]")
 	RSS_ITEM_LINK=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "(.\+)" | tr -d "()")
 
@@ -125,33 +127,44 @@ generate_deploy_rss_feed()
 	RSS_ITEM_DESCRIPTION=$(perl ./markdown/Markdown.pl .rss_tmp)
 	rm -f .rss_tmp
 
-	XML_TEMPLATE="
-	<?xml version="1.0"?>\n
-	<rss version="2.0">\n
-	   <channel>\n
-		  <title>${RSS_CHANEL_TITLE}</title>\n
-		  <link>${RSS_CHANEL_LINK}</link>\n
-		  <description>${RSS_CHANEL_DESCRIPTION}</description>\n
-		  <language>${RSS_LANGUAGE}</language>\n
-		  <ttl>${RSS_TTL}</ttl>\n
-		  <pubDate>${RSS_DATE}</pubDate>\n
-		  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n
-		  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n
-		  <generator>Vim</generator>\n
-		  <webMaster>${RSS_WEB_MASTER}</webMaster>\n
-		  <item>\n
-			 <title>${RSS_ITEM_TITLE}</title>\n
-			 <link>${RSS_ITEM_LINK}</link>\n
-			 <description>${RSS_ITEM_DESCRIPTION}</description>\n
-			 <pubDate>${RSS_DATE}</pubDate>\n
-			 <guid>${RSS_ITEM_LINK}</guid>\n
-		  </item>\n
-	   </channel>\n
-	</rss>"
-
 	mkdir -p $DEPLOY_DIR/$FEED_FILE_NAME
-	echo $XML_TEMPLATE > "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+	$RSS_FILE="$DEPLOY_DIR/$FEED_FILE_NAME/index.xml"
+
+	echo "<?xml version="1.0"?>\n" > $RSS_FILE
+
+	echo "<rss version="2.0">\n" >> $RSS_FILE
+	echo "   <channel>\n" >> $RSS_FILE
+	echo "	  <title>${RSS_CHANEL_TITLE}</title>\n" >> $RSS_FILE
+	echo "	  <link>${RSS_CHANEL_LINK}</link>\n" >> $RSS_FILE
+	echo "	  <description>${RSS_CHANEL_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo "	  <language>${RSS_LANGUAGE}</language>\n" >> $RSS_FILE
+	echo "	  <ttl>${RSS_TTL}</ttl>\n" >> $RSS_FILE
+	echo "	  <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo "	  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n" >> $RSS_FILE
+	echo "	  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n" >> $RSS_FILE
+	echo "	  <generator>Vim</generator>\n" >> $RSS_FILE
+	echo "	  <webMaster>${RSS_WEB_MASTER}</webMaster>\n" >> $RSS_FILE
+	echo "	  <item>\n" >> $RSS_FILE
+	echo "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
+	echo "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
+	echo "		 <description>${RSS_ITEM_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
+	echo "	  </item>\n" >> $RSS_FILE
+	echo "   </channel>\n" >> $RSS_FILE
+	echo "</rss>\n" >> $RSS_FILE
+
 	[ "${VERBOSE:-0}" -ge 1 ] && echo "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+}
+
+feed()
+{
+	if [ $(echo $FEED_TYPE | tr '[:upper:]' '[:lower:]') -eq "rss" ]
+	then
+		generate_deploy_rss_feed()
+	else
+		[ "${QUIET:-0}" -eq 0 ] && echo "$FEED_TYPE feed not supported."
+	fi
 }
 
 # Get options
@@ -168,7 +181,7 @@ done
 load_configuration
 [ "${DO_GENERATE:-0}" -eq 1 ] && generate
 [ "${DO_DEPLOY:-0}" -eq 1 ] && deploy
-[ "${DO_FEED:-0}" -eq 1 ] && generate_deploy_rss_feed
+[ "${DO_FEED:-0}" -eq 1 ] && feed
 [ "${QUIET:-0}" -eq 0 ] && echo "Done."
 
 exit 0
