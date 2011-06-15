@@ -125,32 +125,33 @@ generate_deploy_rss_feed()
 	RSS_ITEM_DESCRIPTION=$(perl ./markdown/Markdown.pl .rss_tmp)
 	rm -f .rss_tmp
 
-	XML_TEMPLATE="
-	<?xml version="1.0"?>\n
-	<rss version="2.0">\n
-	   <channel>\n
-		  <title>${RSS_CHANEL_TITLE}</title>\n
-		  <link>${RSS_CHANEL_LINK}</link>\n
-		  <description>${RSS_CHANEL_DESCRIPTION}</description>\n
-		  <language>${RSS_LANGUAGE}</language>\n
-		  <ttl>${RSS_TTL}</ttl>\n
-		  <pubDate>${RSS_DATE}</pubDate>\n
-		  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n
-		  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n
-		  <generator>Vim</generator>\n
-		  <webMaster>${RSS_WEB_MASTER}</webMaster>\n
-		  <item>\n
-			 <title>${RSS_ITEM_TITLE}</title>\n
-			 <link>${RSS_ITEM_LINK}</link>\n
-			 <description>${RSS_ITEM_DESCRIPTION}</description>\n
-			 <pubDate>${RSS_DATE}</pubDate>\n
-			 <guid>${RSS_ITEM_LINK}</guid>\n
-		  </item>\n
-	   </channel>\n
-	</rss>"
-
 	mkdir -p $DEPLOY_DIR/$FEED_FILE_NAME
-	echo $XML_TEMPLATE > "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+	$RSS_FILE="$DEPLOY_DIR/$FEED_FILE_NAME/index.xml"
+
+	echo "<?xml version="1.0"?>\n" > $RSS_FILE
+
+	echo "<rss version="2.0">\n" >> $RSS_FILE
+	echo "   <channel>\n" >> $RSS_FILE
+	echo "	  <title>${RSS_CHANEL_TITLE}</title>\n" >> $RSS_FILE
+	echo "	  <link>${RSS_CHANEL_LINK}</link>\n" >> $RSS_FILE
+	echo "	  <description>${RSS_CHANEL_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo "	  <language>${RSS_LANGUAGE}</language>\n" >> $RSS_FILE
+	echo "	  <ttl>${RSS_TTL}</ttl>\n" >> $RSS_FILE
+	echo "	  <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo "	  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n" >> $RSS_FILE
+	echo "	  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n" >> $RSS_FILE
+	echo "	  <generator>Vim</generator>\n" >> $RSS_FILE
+	echo "	  <webMaster>${RSS_WEB_MASTER}</webMaster>\n" >> $RSS_FILE
+	echo "	  <item>\n" >> $RSS_FILE
+	echo "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
+	echo "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
+	echo "		 <description>${RSS_ITEM_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
+	echo "	  </item>\n" >> $RSS_FILE
+	echo "   </channel>\n" >> $RSS_FILE
+	echo "</rss>\n" >> $RSS_FILE
+
 	[ "${VERBOSE:-0}" -ge 1 ] && echo "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
 }
 
