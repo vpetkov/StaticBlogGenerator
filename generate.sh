@@ -47,6 +47,7 @@ html_head()
 {
 	echo "<html>\n" > $OUTPUT
 	echo "    <head>\n" >> $OUTPUT
+	echo "        <title>$SITE_TITLE</title>" >> $OUTPUT
 	cat "$CONTENT_DIR/$HEAD_FILE_NAME" >> $OUTPUT
 	echo "    </head>\n" >> $OUTPUT
 	echo "    <body>\n" >> $OUTPUT

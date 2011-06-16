@@ -7,8 +7,8 @@
 Run `generate.sh` with the following options:  
 `-g`: Generate content pages.  
 `-d`: Deploy.  
-`-v`: Verbose.
-`-q`: Quiet.
+`-v`: Verbose.  
+`-q`: Quiet.  
 `-f`: Generate feed: _Experimental: Currently only RSS is supported_
 
 -------------------------------------------------
@@ -62,7 +62,7 @@ I suggest using the `-g` option without `-d` the first time so you can use **OUT
 **FEED_TYPE** is the type of feed to be generated (rss/atom..)  
 **Note** _The script supports only RSS feed.
 
-**RSS_CHANEL_TITLE**, *RSS_CHANEL_LINK**, *RSS_CHANEL_DESCRIPTION**, **RSS_LANGUAG**, **RSS_WEB_MASTER**, **RSS_TTL** and *RSS_DATE** are still in **experimental** state and I don't recommend anyone use the `-f` option to generate RSS feed with this script. This feature will remain fairly limited for the purposes of my own blog. At least for the time being.
+**RSS_CHANEL_TITLE**, **RSS_CHANEL_LINK**, **RSS_CHANEL_DESCRIPTION**, **RSS_LANGUAG**, **RSS_WEB_MASTER**, **RSS_TTL** and *RSS_DATE** are still in **experimental** state and I don't recommend anyone use the `-f` option to generate RSS feed with this script. This feature will remain fairly limited for the purposes of my own blog. At least for the time being.
 
 
 Also the **example** directory contains sample files and the script is supposed to work out of the box and be able to generate the example.
