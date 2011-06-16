@@ -104,7 +104,7 @@ generate()
 		local OUTPUT="$FILE_PATH/index.html"
 
 		html_head
-		html_main("article")
+		html_main "article"
 		[ -n "$FOOTER_FILE_NAME" ] && html_footer
 		html_end
 
@@ -121,7 +121,7 @@ generate()
 		local OUTPUT="$OUTPUT_DIR/index.html"
 
 		html_head
-		html_main("home")
+		html_main "home"
 		[ -n "$SIDEBAR_FILE_NAME" ] && html_sidebar
 		[ -n "$FOOTER_FILE_NAME" ] && html_footer
 		html_end
@@ -197,7 +197,7 @@ feed()
 
 	if [ $(echo $FEED_TYPE | tr '[:upper:]' '[:lower:]') -eq "rss" ]
 	then
-		generate_deploy_rss_feed()
+		generate_deploy_rss_feed
 	else
 		[ "${QUIET:-0}" -eq 0 ] && echo "$FEED_TYPE feed not supported."
 	fi
@@ -211,6 +211,8 @@ while getopts vqgdf opts; do
 	g)	DO_GENERATE=1 ;;
 	d)	DO_DEPLOY=1 ;;
 	f)	DO_FEED=1 ;;
+	[?])	echo "Usage: $0 [-g [-d]] [-f] [-v] [-q]" >&2
+			exit 1;;
 	esac
 done
 
