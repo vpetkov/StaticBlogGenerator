@@ -39,63 +39,92 @@ load_configuration()
 
 markdown()
 {
-	cat $TEMPLATE_HEADER_FILE > $OUTPUT
 	perl $PATH_TO_MARKDOWN $INPUT >> $OUTPUT
-	cat $TEMPLATE_FOOTER_FILE >> $OUTPUT
+	echo "\n" >> $OUTPUT
+}
+
+html_head()
+{
+	echo "<html>\n" > $OUTPUT
+	echo "    <head>\n" >> $OUTPUT
+	cat "$CONTENT_DIR/$HEAD_FILE_NAME" >> $OUTPUT
+	echo "    </head>\n" >> $OUTPUT
+	echo "    <body>\n" >> $OUTPUT
+}
+
+html_main()
+{
+	echo "        <div id=\"wrap\">\n" >> $OUTPUT
+	echo "            <div id=\"title\"><a href=\"$SITE_URL\"><h1>$SITE_TITLE</h1></a></div>\n" >> $OUTPUT
+	echo "            <div id=\"main\">\n" >> $OUTPUT
+	markdown
+	echo "            </div>\n" >> $OUTPUT
+}
+
+html_sidebar()
+{
+	local INPUT="$CONTENT_DIR/$SIDEBAR_FILE_NAME"
+	echo "            <div id=\"side\">\n" >> $OUTPUT
+	markdown
+	echo "            </div>\n" >> $OUTPUT
+}
+
+html_footer()
+{
+	local INPUT="$CONTENT_DIR/$FOOTER_FILE_NAME"
+	echo "            <div id=\"footer\">\n" >> $OUTPUT
+	markdown
+	echo "            </div>\n" >> $OUTPUT
+}
+
+html_end()
+{
+	echo "    </body>\n" >> $OUTPUT
+	echo "</html>\n" >> $OUTPUT
 }
 
 generate()
 {
 	[ "${QUIET:-0}" -eq 0 ] && echo "Generate content..."
 
-	TEMPLATE_HEADER_FILE="$TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html"
-	TEMPLATE_FOOTER_FILE="$TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html"
-
-	if [ -f TEMPLATE_HEADER_FILE ] && [ -f TEMPLATE_FOOTER_FILE ]
-	then
-		[ "${QUIET:-0}" -eq 0 ] && echo "Template missing"
-		exit 2
-	fi
-
 	rm -rf $OUTPUT_DIR
+
 	for FILE_PATH in $(find $CONTENT_DIR -iname "*.$CONTENT_FILE_EXTENSION" |
 		grep -v "$HOME_PAGE_FILE_NAME\.$CONTENT_FILE_EXTENSION\|$FEED_FILE_NAME\.$CONTENT_FILE_EXTENSION")
 	do
 		local INPUT=$FILE_PATH
 
-		FILE_PATH=${FILE_PATH%.markdown}
+		FILE_PATH=${FILE_PATH%.$CONTENT_FILE_EXTENSION}
 		FILE_PATH=${FILE_PATH#$CONTENT_DIR/}
-		FILE_PATH=$OUTPUT_DIR/$FILE_PATH
+		FILE_PATH="$OUTPUT_DIR/$FILE_PATH"
 		mkdir -p $FILE_PATH
 		[ "${VERBOSE:-0}" -ge 1 ] && echo $FILE_PATH
 
-		local OUTPUT=$FILE_PATH/index.html
-		markdown
+		local OUTPUT="$FILE_PATH/index.html"
+
+		html_head
+		html_main
+		[ -n "$FOOTER_FILE_NAME" ] && html_footer
+		html_end
 
 		[ "${VERBOSE:-0}" -ge 1 ] && echo $OUTPUT
 	done
 
 	[ "${QUIET:-0}" -eq 0 ] && echo "Generate home page..."
 
-	FILE_PATH=$CONTENT_DIR/$HOME_PAGE_FILE_NAME.$CONTENT_FILE_EXTENSION
-	if [ -d $HOME_PAGE_TEMPLATE_DIR ]
-	then
-		if [ -f "$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html" ]
-		then 
-			TEMPLATE_HEADER_FILE="$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_HEADER_FILE_NAME.html"
-		fi
-
-		if [ -f "$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html" ]
-		then 
-			TEMPLATE_FOOTER_FILE="$HOME_PAGE_TEMPLATE_DIR/$TEMPLATE_FOOTER_FILE_NAME.html"
-		fi
-	fi
+	FILE_PATH="$CONTENT_DIR/$HOME_PAGE_FILE_NAME"
 
 	if [ -f $FILE_PATH ]
 	then
 		local INPUT=$FILE_PATH
-		local OUTPUT=$OUTPUT_DIR/index.html
-		markdown
+		local OUTPUT="$OUTPUT_DIR/index.html"
+
+		html_head
+		html_main
+		[ -n "$SIDEBAR_FILE_NAME" ] && html_sidebar
+		[ -n "$FOOTER_FILE_NAME" ] && html_footer
+		html_end
+
 		[ "${VERBOSE:-0}" -ge 1 ] && echo $OUTPUT
 	fi
 }
@@ -116,16 +145,18 @@ deploy()
 
 generate_deploy_rss_feed()
 {
-	[ "${QUIET:-0}" -eq 0 ] && echo "Generate new feed..."
-
 	RSS_DATE="`date +${RSS_DATE_FORMAT}`"
 
-	RSS_ITEM_TITLE=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "\[.\+\]" | tr -d "[]")
-	RSS_ITEM_LINK=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" | grep -o "(.\+)" | tr -d "()")
+	RSS_ITEM_TITLE=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME" | grep -o "\[.\+\]" | tr -d "[]")
+	RSS_ITEM_LINK=$(head -1 "$CONTENT_DIR/$FEED_FILE_NAME" | grep -o "(.\+)" | tr -d "()")
 
-	tail --lines=+2 "$CONTENT_DIR/$FEED_FILE_NAME.markdown" > .rss_tmp
-	RSS_ITEM_DESCRIPTION=$(perl ./markdown/Markdown.pl .rss_tmp)
-	rm -f .rss_tmp
+	local INPUT=mktemp
+	tail --lines=+2 "$CONTENT_DIR/$FEED_FILE_NAME" > $INPUT
+
+	local OUTPUT=mktemp
+	markdown
+
+	RSS_ITEM_DESCRIPTION=$OUTPUT
 
 	mkdir -p $DEPLOY_DIR/$FEED_FILE_NAME
 	$RSS_FILE="$DEPLOY_DIR/$FEED_FILE_NAME/index.xml"
@@ -142,23 +173,27 @@ generate_deploy_rss_feed()
 	echo "	  <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
 	echo "	  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n" >> $RSS_FILE
 	echo "	  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n" >> $RSS_FILE
-	echo "	  <generator>Vim</generator>\n" >> $RSS_FILE
+	echo "	  <generator>$RSS_GENERATOR</generator>\n" >> $RSS_FILE
 	echo "	  <webMaster>${RSS_WEB_MASTER}</webMaster>\n" >> $RSS_FILE
 	echo "	  <item>\n" >> $RSS_FILE
 	echo "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
 	echo "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
-	echo "		 <description>${RSS_ITEM_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo "		 <description>" >> $RSS_FILE
+	cat $RSS_ITEM_DESCRIPTION >> RSS_FILE
+	echo "</description>\n" >> $RSS_FILE
 	echo "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
 	echo "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
 	echo "	  </item>\n" >> $RSS_FILE
 	echo "   </channel>\n" >> $RSS_FILE
 	echo "</rss>\n" >> $RSS_FILE
 
-	[ "${VERBOSE:-0}" -ge 1 ] && echo "$DEPLOY_DIR/$FEED_FILE_NAME/rss.xml"
+	[ "${VERBOSE:-0}" -ge 1 ] && echo $RSS_FILE
 }
 
 feed()
 {
+	[ "${QUIET:-0}" -eq 0 ] && echo "Generate new feed..."
+
 	if [ $(echo $FEED_TYPE | tr '[:upper:]' '[:lower:]') -eq "rss" ]
 	then
 		generate_deploy_rss_feed()
