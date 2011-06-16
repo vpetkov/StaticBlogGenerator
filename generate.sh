@@ -180,7 +180,7 @@ generate_deploy_rss_feed()
 	echo "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
 	echo "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
 	echo "		 <description>" >> $RSS_FILE
-	cat $RSS_ITEM_DESCRIPTION >> RSS_FILE
+	cat $RSS_ITEM_DESCRIPTION >> $RSS_FILE
 	echo "</description>\n" >> $RSS_FILE
 	echo "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
 	echo "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
