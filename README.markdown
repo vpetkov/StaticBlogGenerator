@@ -9,7 +9,7 @@ Run `generate.sh` with the following options:
 `-d`: Deploy.  
 `-v`: Verbose.
 `-q`: Quiet.
-`-f`: Generate RSS feed from template: _Experimental_
+`-f`: Generate feed: _Experimental: Currently only RSS is supported_
 
 -------------------------------------------------
 
@@ -22,6 +22,12 @@ Run `generate.sh` with the following options:
 The rest of the configuration is stored in the configuration file.
 
 #### Current version supports the following configurable variables:
+
+**SITE_TITLE** is used in the websites title and for the feed generation.
+
+**SITE_URL** is the default url for the home page it is used for the feed generation and also for the title href.
+
+**SITE_DESCRIPTION** is placed below the title and is used for the feed generation
 
 **DEPLOY_DIR** is the location for public html.
 
@@ -42,22 +48,22 @@ I suggest using the `-g` option without `-d` the first time so you can use **OUT
 
 **CONTENT_FILE_EXTENSION** is the extension for plain text content files. Only files with this extension in the **CONTENT_DIR** will be taken into account. Default extension is `.markdown` so that other files like `.txt` or `.todo` can be stored in the **CONTENT_DIR**.
 
+**PATH_TO_MARKDOWN** is the location of the Markdown script. By default this repo has the Markdown script and this variable is set correctly.
+
 **HOME_PAGE_FILE_NAME** is the file containing the home page content e.g. `OUTPUT_DIR/index.html`  
 **Note**: _The script doesn't auto-generate index of all blog posts/journal entries for the home page. Instead the user can specify the content. That's because I prefer to manually specify what content goes on the home page._
 
-**PATH_TO_MARKDOWN** is the location of the Markdown script. By default this repo has the Markdown script and this variable is not recommended to be changed.
+**SIDEBAR_FILE_NAME** is the file with the content for the sidebar
 
-**TEMPLATE_DIR** is the location for the template used to generate html pages. Currently the script supports two separate files one for the html before the content and one for the html after the content. Templates file names are `head.html` and `foot.html` - this idea is taken from [Blosxom](http://www.blosxom.com/).
+**FOOTER_FILE_NAME** is the file with the footer content.
+
+**FEED_FILE_NAME** contains feed entry description.
+
+**FEED_TYPE** is the type of feed to be generated (rss/atom..)  
+**Note** _The script supports only RSS feed.
 
 **RSS_CHANEL_TITLE**, *RSS_CHANEL_LINK**, *RSS_CHANEL_DESCRIPTION**, **RSS_LANGUAG**, **RSS_WEB_MASTER**, **RSS_TTL** and *RSS_DATE** are still in **experimental** state and I don't recommend anyone use the `-f` option to generate RSS feed with this script. This feature will remain fairly limited for the purposes of my own blog. At least for the time being.
 
-#### Next few variables are not recommended for reconfiguration. However nothing bad will happen.
-
-**HOME_PAGE_TEMPLATE_DIR** is the location for home page specific templates. Default is **TEMPLATE_DIR**/**HOME_PAGE_FILE_NAME**. If suitable template files aren't found for the home page the default ones will be used.
-
-**TEMPLATE_HEADER_FILE_NAME** and **TEMPLATE_FOOTER_FILE_NAME** hold the information for template file names.
-
-#### My template files are available here: [StaticBlogTemplates](https://github.com/vpetkov/StaticBlogTemplates)
 
 Also the **example** directory contains sample files and the script is supposed to work out of the box and be able to generate the example.
 To setup just remove the example directory, edit the configuration file and generate your site.
