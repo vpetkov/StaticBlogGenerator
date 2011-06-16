@@ -57,7 +57,7 @@ html_main()
 {
 	echo "        <div id=\"wrap\">\n" >> $OUTPUT
 	echo "            <div id=\"title\"><a href=\"$SITE_URL\"><h1>$SITE_TITLE</h1></a></div>\n" >> $OUTPUT
-	echo "            <div id=\"main\">\n" >> $OUTPUT
+	echo "            <div id=\"main\" class=\"$1\">\n" >> $OUTPUT
 	markdown
 	echo "            </div>\n" >> $OUTPUT
 }
@@ -104,7 +104,7 @@ generate()
 		local OUTPUT="$FILE_PATH/index.html"
 
 		html_head
-		html_main
+		html_main("article")
 		[ -n "$FOOTER_FILE_NAME" ] && html_footer
 		html_end
 
@@ -121,7 +121,7 @@ generate()
 		local OUTPUT="$OUTPUT_DIR/index.html"
 
 		html_head
-		html_main
+		html_main("home")
 		[ -n "$SIDEBAR_FILE_NAME" ] && html_sidebar
 		[ -n "$FOOTER_FILE_NAME" ] && html_footer
 		html_end
