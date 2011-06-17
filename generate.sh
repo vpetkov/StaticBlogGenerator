@@ -159,8 +159,8 @@ generate_deploy_rss_feed()
 
 	RSS_ITEM_DESCRIPTION=$OUTPUT
 
-	mkdir -p $DEPLOY_DIR/$FEED_FILE_NAME
-	$RSS_FILE="$DEPLOY_DIR/$FEED_FILE_NAME/index.xml"
+	mkdir -p "$DEPLOY_DIR/${FEED_FILE_NAME%.*}"
+	RSS_FILE="$DEPLOY_DIR/${FEED_FILE_NAME%.*}/index.xml"
 
 	echo "<?xml version="1.0"?>\n" > $RSS_FILE
 
@@ -195,7 +195,8 @@ feed()
 {
 	[ "${QUIET:-0}" -eq 0 ] && echo "Generate new feed..."
 
-	if [ $(echo $FEED_TYPE | tr '[:upper:]' '[:lower:]') -eq "rss" ]
+
+	if [ $(echo $FEED_TYPE | tr '[:upper:]' '[:lower:]') = "rss" ]
 	then
 		generate_deploy_rss_feed
 	else
@@ -204,14 +205,15 @@ feed()
 }
 
 # Get options
-while getopts vqgdf opts; do
+while getopts c:vqgdf opts; do
 	case "$opts" in
+	c)	CONFIG_FILE_NAME=${OPTARG};;
 	v)	VERBOSE=1 ;;
 	q)	QUIET=1 ;;
 	g)	DO_GENERATE=1 ;;
 	d)	DO_DEPLOY=1 ;;
 	f)	DO_FEED=1 ;;
-	[?])	echo "Usage: $0 [-g [-d]] [-f] [-v] [-q]" >&2
+	[?])	echo "Usage: $0 [-c CONFIG_FILE_NAME] [-g [-d]] [-f] [-v] [-q]" >&2
 			exit 1;;
 	esac
 done
