@@ -162,31 +162,31 @@ generate_deploy_rss_feed()
 	mkdir -p "$DEPLOY_DIR/${FEED_FILE_NAME%.*}"
 	RSS_FILE="$DEPLOY_DIR/${FEED_FILE_NAME%.*}/index.xml"
 
-	echo "<?xml version="1.0"?>\n" > $RSS_FILE
+	echo -e "<?xml version="1.0"?>\n" > $RSS_FILE
 
-	echo "<rss version="2.0">\n" >> $RSS_FILE
-	echo "   <channel>\n" >> $RSS_FILE
-	echo "	  <title>${RSS_CHANEL_TITLE}</title>\n" >> $RSS_FILE
-	echo "	  <link>${RSS_CHANEL_LINK}</link>\n" >> $RSS_FILE
-	echo "	  <description>${RSS_CHANEL_DESCRIPTION}</description>\n" >> $RSS_FILE
-	echo "	  <language>${RSS_LANGUAGE}</language>\n" >> $RSS_FILE
-	echo "	  <ttl>${RSS_TTL}</ttl>\n" >> $RSS_FILE
-	echo "	  <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
-	echo "	  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n" >> $RSS_FILE
-	echo "	  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n" >> $RSS_FILE
-	echo "	  <generator>$RSS_GENERATOR</generator>\n" >> $RSS_FILE
-	echo "	  <webMaster>${RSS_WEB_MASTER}</webMaster>\n" >> $RSS_FILE
-	echo "	  <item>\n" >> $RSS_FILE
-	echo "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
-	echo "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
-	echo "		 <description>" >> $RSS_FILE
+	echo -e "<rss version="2.0">\n" >> $RSS_FILE
+	echo -e "   <channel>\n" >> $RSS_FILE
+	echo -e "	  <title>${RSS_CHANEL_TITLE}</title>\n" >> $RSS_FILE
+	echo -e "	  <link>${RSS_CHANEL_LINK}</link>\n" >> $RSS_FILE
+	echo -e "	  <description>${RSS_CHANEL_DESCRIPTION}</description>\n" >> $RSS_FILE
+	echo -e "	  <language>${RSS_LANGUAGE}</language>\n" >> $RSS_FILE
+	echo -e "	  <ttl>${RSS_TTL}</ttl>\n" >> $RSS_FILE
+	echo -e "	  <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo -e "	  <lastBuildDate>${RSS_DATE}</lastBuildDate>\n" >> $RSS_FILE
+	echo -e "	  <docs>http://blogs.law.harvard.edu/tech/rss</docs>\n" >> $RSS_FILE
+	echo -e "	  <generator>$RSS_GENERATOR</generator>\n" >> $RSS_FILE
+	echo -e "	  <webMaster>${RSS_WEB_MASTER}</webMaster>\n" >> $RSS_FILE
+	echo -e "	  <item>\n" >> $RSS_FILE
+	echo -e "		 <title>${RSS_ITEM_TITLE}</title>\n" >> $RSS_FILE
+	echo -e "		 <link>${RSS_ITEM_LINK}</link>\n" >> $RSS_FILE
+	echo    "		 <description>" >> $RSS_FILE
 	cat $RSS_ITEM_DESCRIPTION >> $RSS_FILE
-	echo "</description>\n" >> $RSS_FILE
-	echo "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
-	echo "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
-	echo "	  </item>\n" >> $RSS_FILE
-	echo "   </channel>\n" >> $RSS_FILE
-	echo "</rss>\n" >> $RSS_FILE
+	echo -e "</description>\n" >> $RSS_FILE
+	echo -e "		 <pubDate>${RSS_DATE}</pubDate>\n" >> $RSS_FILE
+	echo -e "		 <guid>${RSS_ITEM_LINK}</guid>\n" >> $RSS_FILE
+	echo -e "	  </item>\n" >> $RSS_FILE
+	echo -e "   </channel>\n" >> $RSS_FILE
+	echo -e "</rss>\n" >> $RSS_FILE
 
 	[ "${VERBOSE:-0}" -ge 1 ] && echo $RSS_FILE
 }
